@@ -1,12 +1,25 @@
-import {useState} from 'react'
+import {useState, useEffect} from 'react'
+import axios from 'axios'
+import Persons from './components/Persons'
+import Filter from './components/Filter'
+import PersonForm from "./components/PersonForm";
 
 const App = () => {
-    const [persons, setPersons] = useState([
-        {name: 'Matti Meikäläinen', id: 1, phone: '050-1234567'}
-    ])
+    const [persons, setPersons] = useState([])
     const [newName, setNewName] = useState('')
     const [newNumber, setNewNumber] = useState('')
     const [filter, setFilter] = useState('')
+
+    useEffect(() => {
+        console.log('useEffect called')
+        axios
+            .get('http://localhost:3001/persons')
+            .then(response => {
+                console.log('promise fulfilled')
+                setPersons(response.data)
+            })
+    }, [])
+    console.log('render', persons.length, 'persons')
 
     const validate = (event) => {
         event.preventDefault()
@@ -63,50 +76,6 @@ const App = () => {
         </div>
     )
 
-}
-const PersonForm = (props) => {
-    return (
-        <form onSubmit={props.validate}>
-            <div>
-                name: <input
-                value={props.newName}
-                onChange={props.handlePersonChange}
-            />
-            </div>
-            <div>
-                number: <input
-                value={props.newNumber}
-                onChange={props.handleNumberChange}
-            />
-            </div>
-            <div>
-                <button type="submit">add</button>
-            </div>
-        </form>
-    )
-}
-
-const Filter = (props) => {
-    return (
-        <div>
-            filter shown with <input
-            value={props.filter}
-            onChange={props.handleFilterChange}
-            />
-        </div>
-    )
-
-}
-
-const Persons = (props) => {
-    const selectedPersons = props.persons.filter(person => person.name.toUpperCase().startsWith(props.filter.toUpperCase()))
-    return (
-        <div>
-            {selectedPersons.map(person =>
-                <p key={person.id}>{person.name} {person.phone}</p>
-            )}
-        </div>
-    )
 }
 
 export default App
