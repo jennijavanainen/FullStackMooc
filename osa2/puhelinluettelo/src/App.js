@@ -4,7 +4,6 @@ import Persons from './components/Persons'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm';
 import Notification from './components/Notification'
-import './index.css'
 
 const App = () => {
     const [persons, setPersons] = useState([])
@@ -19,7 +18,10 @@ const App = () => {
             .then(response => {
                 setPersons(response.data)
             })
-    }, [persons])
+    }, [])
+
+    const selectedPersons = (filter.length === 0) ? persons :
+        persons.filter(p => p.name.toUpperCase().includes(filter.toUpperCase()))
 
     const validate = (event) => {
         event.preventDefault()
@@ -33,6 +35,13 @@ const App = () => {
         }
     }
 
+    const notify = (text, type) => {
+        setNotification({text, type})
+        setTimeout(() => {
+            setNotification(null)
+        }, 2500)
+    }
+
     const updatePerson = (id) => {
         const personObject = {
             name: newName,
@@ -42,21 +51,14 @@ const App = () => {
         personComm
             .update(id, personObject)
             .then(response => {
-                setPersons(persons.concat(response.data))
-                setNotification(`Updated ${newName}`)
-                setTimeout(() => {
-                    setNotification(null)
-                }, 2000)
-                setNewName('')
-                setNewNumber('')
+                setPersons(persons.map(person => person.id === id ? response.data : person))
+                notify(`Updated ${newName}`, 'info')
             }).catch(() => {
-            setNotification(
-                `Person '${newName}' was already removed from server`
-            )
-            setTimeout(() => {
-                setNotification(null)
-            }, 2000)
+            notify(`Person '${newName}' was already removed from server`, 'alert')
+            setPersons(persons.filter(p => p.id !== id))
         })
+        setNewName('')
+        setNewNumber('')
 
     }
 
@@ -69,13 +71,14 @@ const App = () => {
             .create(personObject)
             .then(response => {
                 setPersons(persons.concat(response.data))
-                setNotification(`Added ${newName}`)
-                setTimeout(() => {
-                    setNotification(null)
-                }, 2000)
-                setNewName('')
-                setNewNumber('')
+                notify(`Added ${newName}`, 'info')
             })
+            .catch(error => {
+                console.log(error.response.data)
+                notify(error.response.data.error, 'alert')
+            })
+        setNewName('')
+        setNewNumber('')
     }
 
     const handlePersonChange = (event) => {
@@ -95,16 +98,16 @@ const App = () => {
             personComm
                 .remove(id)
                 .then(() => {
-                    setNotification(`Deleted ${name}`)
-                    setTimeout(() => {
-                        setNotification(null)
-                    }, 2000)
+                    notify(`Deleted ${name}`, 'info')
                     personComm
                         .getAll()
                         .then(response => {
                             setPersons(response.data)
                         })
-                })
+                }).catch(() => {
+                notify(`Person '${newName}' was already removed from server`, 'alert')
+                setPersons(persons.filter(p => p.id !== id))
+            })
         }
     }
 
@@ -128,7 +131,7 @@ const App = () => {
             <h2>Numbers</h2>
             <Persons
                 handleDeleteClick={handleDeleteClick}
-                persons={persons}
+                persons={selectedPersons}
                 filter={filter}
             />
         </div>

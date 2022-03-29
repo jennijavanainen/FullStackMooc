@@ -1,11 +1,6 @@
 {
   "persons": [
     {
-      "name": "Piko Pikkarainen",
-      "number": "12121",
-      "id": 5
-    },
-    {
       "name": "Janne Murunen",
       "number": "87483728479",
       "id": 6
@@ -24,11 +19,6 @@
       "name": "Pingu the legend",
       "number": "1111111",
       "id": 9
-    },
-    {
-      "name": "Testi 1",
-      "number": "66666666",
-      "id": 10
     }
   ]
 }
