@@ -2,22 +2,26 @@ const mongoose = require('mongoose')
 
 const blogSchema = new mongoose.Schema({
   title: {
-    type: String
+    type: String,
+    required: true
   },
   author: {
     type: String
   },
   url: {
-    type: String
+    type: String,
+    required: true
   },
   likes: {
-    type: Number
-  }
+    type: Number,
+    required: true
+  },
 })
 
 
 blogSchema.set('toJSON', {
   transform: (document, returnedObject) => {
+    returnedObject.id = returnedObject._id.toString()
     delete returnedObject._id
     delete returnedObject.__v
   }
