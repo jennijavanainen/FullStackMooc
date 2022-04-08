@@ -41,9 +41,10 @@ describe('returning all blogs from db', () => {
 describe('posting a blog', () => {
   test('added blog can be found', async () => {
     const newBlog = {
-      title: "Type wars",
-      author: "Robert C. Martin",
-      url: "http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html",
+      title: 'Type wars',
+      author: 'Robert C. Martin',
+      url: 'http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html',
+      likes: 6
     }
 
     await api
@@ -59,6 +60,37 @@ describe('posting a blog', () => {
     expect(contents).toContain(
       'Type wars'
     )
+  })
+
+  test('without likes returns exactly 0 likes', async () => {
+    const newBlog = {
+      title: 'Type wars',
+      author: 'Robert C. Martin',
+      url: 'http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html',
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    const likes = blogsAtEnd.find(blog => blog.title === 'Type wars').likes
+    expect(likes).toBe(0)
+  })
+
+  test('without title/url will result 400 Bad Request', async () => {
+    const newBlog = {
+      title: 'Type wars',
+      author: 'Robert C. Martin',
+      likes: 2
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(400)
   })
 })
 
