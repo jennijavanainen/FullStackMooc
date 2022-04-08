@@ -23,7 +23,7 @@ describe('returning all blogs from db', () => {
     expect(response.body).toHaveLength(helper.initialBlogs.length)
   })
 
-  test('a specific blog is returned', async () => {
+  test('a specific blog is returned with all', async () => {
     const response = await api.get('/api/blogs')
     const contents = response.body.map(r => r.title)
     expect(contents).toContain('Canonical string reduction')
@@ -35,6 +35,27 @@ describe('returning all blogs from db', () => {
     contents.forEach(blog => {
       expect(blog).toHaveProperty('id')
     })
+  })
+})
+
+describe('getting only a specific blog from db', () => {
+  test('returns correct blog', async () => {
+    const allBlogs = await helper.blogsInDb()
+    const blogToFind = allBlogs[0]
+    const response = await api
+      .get(`/api/blogs/${blogToFind.id}`)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    expect(response.body).toEqual(allBlogs[0])
+  })
+
+  test('with invalid id returns code 400', async () => {
+
+    await api
+      .get('/api/blogs/600')
+      .expect(400)
+
   })
 })
 
@@ -80,7 +101,7 @@ describe('posting a blog', () => {
     expect(likes).toBe(0)
   })
 
-  test('without title/url will result 400 Bad Request', async () => {
+  test('without title/url results code 400', async () => {
     const newBlog = {
       title: 'Type wars',
       author: 'Robert C. Martin',
@@ -91,9 +112,31 @@ describe('posting a blog', () => {
       .post('/api/blogs')
       .send(newBlog)
       .expect(400)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
   })
 })
 
+describe('deleting a blog', () => {
+  test('with valid id results code 204', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToDelete = blogsAtStart[0]
+
+    await api
+      .delete(`/api/blogs/${blogToDelete.id}`)
+      .expect(204)
+
+    const blogsAtEnd = await helper.blogsInDb()
+
+    expect(blogsAtEnd).toHaveLength(
+      helper.initialBlogs.length - 1
+    )
+
+    const contents = blogsAtEnd.map(r => r.title)
+    expect(contents).not.toContain(blogToDelete.title)
+  })
+})
 
 afterAll(() => {
   mongoose.connection.close()
