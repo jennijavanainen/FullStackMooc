@@ -2,6 +2,7 @@ const blogRouter = require('express').Router()
 const Blog = require('../models/blog')
 const logger = require('../utils/logger');
 const User = require("../models/user");
+const jwt = require("jsonwebtoken");
 
 blogRouter.get('/', async (req, res) => {
   const blogs = await Blog.find({})
@@ -11,15 +12,15 @@ blogRouter.get('/', async (req, res) => {
 
 blogRouter.get('/:id', async (req, res) => {
   const blog = await Blog.findById(req.params.id)
-  if (blog) {
-    res.json(blog)
-  } else {
-    res.status(404).end()
-  }
+
+  blog ? res.json(blog) : res.status(404).end()
+
 })
 
 blogRouter.post('/', async (req, res) => {
-  const user = await User.findById(req.body.userId)
+
+  //const user = await User.findById(decodedToken.id)
+  const user = req.user
 
   const blog = new Blog({
     title: req.body.title,
@@ -42,8 +43,19 @@ blogRouter.post('/', async (req, res) => {
 })
 
 blogRouter.delete('/:id', async (req, res) => {
-  await Blog.findByIdAndRemove(req.params.id)
-  res.status(204).end()
+  const user = req.user
+  const blogToDelete = await Blog.findById(req.params.id)
+
+  if (blogToDelete && blogToDelete.user.toString() === user._id.toString()) {
+    await Blog.findByIdAndRemove(req.params.id)
+    res.status(204).end()
+  } else {
+    return res.status(401).json({
+      error: 'Current user cannot delete this blog'
+    })
+  }
+
+
 })
 
 blogRouter.put('/:id', async (req, res) => {
@@ -51,8 +63,8 @@ blogRouter.put('/:id', async (req, res) => {
 
   const updatedBlog = await Blog.findByIdAndUpdate(
     req.params.id,
-    {likes},
-    {new: true}
+    { likes },
+    { new: true }
   )
 
   res.status(201).json(updatedBlog)

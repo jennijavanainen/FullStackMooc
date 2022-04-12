@@ -1,6 +1,21 @@
 const Blog = require('../models/blog')
 const User = require("../models/user");
 
+const initialUsers = [
+  {
+    name: 'Person 1',
+    username: 'person1',
+    password: 'secret',
+    _id:'5c4857b1003ad1a6e6626931'
+  },
+  {
+    name: 'Person 2',
+    username: 'person2',
+    password: 'secret',
+    _id:'5c4857b1003ad1a6e6626932'
+  }
+]
+
 const initialBlogs = [
   {
     _id: '5a422a851b54a676234d17f7',
@@ -8,6 +23,7 @@ const initialBlogs = [
     author: 'Michael Chan',
     url: 'https://reactpatterns.com/',
     likes: 4,
+    user:'5c4857b1003ad1a6e6626931',
     __v: 0
   },
   {
@@ -16,6 +32,7 @@ const initialBlogs = [
     author: 'Edsger W. Dijkstra',
     url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
     likes: 5,
+    user:'5c4857b1003ad1a6e6626931',
     __v: 0
   },
   {
@@ -24,6 +41,7 @@ const initialBlogs = [
     author: 'Edsger W. Dijkstra',
     url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
     likes: 12,
+    user:'5c4857b1003ad1a6e6626931',
     __v: 0
   },
   {
@@ -32,6 +50,7 @@ const initialBlogs = [
     author: 'Robert C. Martin',
     url: 'http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.htmll',
     likes: 10,
+    user: '5c4857b1003ad1a6e6626932',
     __v: 0
   },
 ]
@@ -47,6 +66,7 @@ const usersInDb = async () => {
 }
 
 module.exports = {
+  initialUsers,
   initialBlogs,
   blogsInDb,
   usersInDb
