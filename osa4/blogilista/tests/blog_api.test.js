@@ -6,11 +6,24 @@ const Blog = require('../models/blog')
 const helper = require('./test_helper')
 const User = require('../models/user')
 
+let token
+
 beforeEach(async () => {
-  await User.deleteMany({})
   await Blog.deleteMany({})
-  await User.insertMany(helper.initialUsers)
+  await User.deleteMany({})
+
+  const defaultUser = {
+    username: 'name',
+    password: 'password'
+  }
+
+  await api.post("/api/users").send(defaultUser)
   await Blog.insertMany(helper.initialBlogs)
+
+  const result = await api.post("/api/login").send(defaultUser)
+
+  token = result.body.token
+
 })
 describe('returning all blogs from db', () => {
   test('blog information is returned as json', async () => {
@@ -73,6 +86,7 @@ describe('posting a blog', () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', `Bearer ${token}`)
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -95,6 +109,7 @@ describe('posting a blog', () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', `Bearer ${token}`)
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -113,6 +128,7 @@ describe('posting a blog', () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', `Bearer ${token}`)
       .send(newBlog)
       .expect(400)
 
@@ -123,17 +139,33 @@ describe('posting a blog', () => {
 
 describe('deleting a blog', () => {
   test('with valid id results code 204', async () => {
+    const newBlog = {
+      _id: "5a422b891b54a676234d18fa",
+      title: "Deletion test",
+      author: "Unknown",
+      url: "www.test.fi",
+      __v: 0
+    }
+
+    await api
+      .post("/api/blogs")
+      .set("Authorization", `Bearer ${token}`)
+      .send(newBlog)
+      .expect(201);
+
     const blogsAtStart = await helper.blogsInDb()
-    const blogToDelete = blogsAtStart[0]
+    const blogToDelete = blogsAtStart[blogsAtStart.length - 1]
 
     await api
       .delete(`/api/blogs/${blogToDelete.id}`)
+      .set('Authorization', `Bearer ${token}`)
       .expect(204)
 
     const blogsAtEnd = await helper.blogsInDb()
+    console.log(blogsAtEnd)
 
     expect(blogsAtEnd).toHaveLength(
-      helper.initialBlogs.length - 1
+      helper.initialBlogs.length
     )
 
     const contents = blogsAtEnd.map(r => r.title)
