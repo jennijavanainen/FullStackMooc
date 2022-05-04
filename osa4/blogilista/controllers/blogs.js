@@ -4,13 +4,16 @@ const logger = require('../utils/logger');
 const { userExtractor } = require("../utils/middleware");
 
 blogRouter.get('/', async (req, res) => {
-  const blogs = await Blog.find({})
+  const blogs = await Blog
+    .find({})
     .populate('user', { username: 1 , name: 1})
   res.json(blogs)
 })
 
 blogRouter.get('/:id', async (req, res) => {
-  const blog = await Blog.findById(req.params.id)
+  const blog = await Blog
+    .findById(req.params.id)
+    .populate('user', { username: 1 , name: 1})
 
   blog ? res.json(blog) : res.status(404).end()
 
@@ -24,17 +27,16 @@ blogRouter.post('/', userExtractor, async (req, res) => {
     author: req.body.author,
     url: req.body.url,
     likes: req.body.likes || 0,
-    user: user._id
+    user: user.id
   })
 
+  await blog.populate('user')
+
   const savedBlog = await blog.save()
-  if (user.blogs) {
-    user.blogs = user.blogs.concat(savedBlog._id)
-  } else {
-    user.blogs = [savedBlog._id]
-  }
+  user.blogs ? user.blogs = user.blogs.concat(savedBlog._id) : user.blogs = [savedBlog._id]
 
   await user.save()
+
   res.status(201).json(savedBlog)
 
 })
@@ -62,7 +64,7 @@ blogRouter.put('/:id', async (req, res) => {
     req.params.id,
     { likes },
     { new: true }
-  )
+  ).populate('user', { username: 1 , name: 1})
 
   res.status(201).json(updatedBlog)
 })
