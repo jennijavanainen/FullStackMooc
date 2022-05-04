@@ -3,9 +3,9 @@ import Blog from './components/Blog'
 import Notification from './components/Notification'
 import blogService from './services/blogs'
 import loginService from './services/login'
-import LoginForm from "./components/LoginForm";
-import CreateNewForm from "./components/CreateNewForm";
-import Togglable from "./components/Togglable";
+import LoginForm from './components/LoginForm'
+import CreateNewForm from './components/CreateNewForm'
+import Togglable from './components/Togglable'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -33,7 +33,7 @@ const App = () => {
   }, [])
 
   const notify = (text, type) => {
-    setNotification({text, type})
+    setNotification({ text, type })
     setTimeout(() => {
       setNotification(null)
     }, 4000)
@@ -75,7 +75,7 @@ const App = () => {
         setBlogs(blogs.concat(returnedBlog))
         notify(`Added new blog: ${returnedBlog.title} by ${returnedBlog.author} `, 'info')
       }).catch(() => notify('Error occurred', 'alert')
-    )
+      )
   }
 
   const updateBlog = (id, updatedBlog) => {
@@ -85,7 +85,7 @@ const App = () => {
         setBlogs(blogs.map(blog => blog.id !== id ? blog : returnedBlog))
         notify(`Like for blog: ${returnedBlog.title} by ${returnedBlog.author} saved `, 'info')
       }).catch(() => notify('Error occurred', 'alert')
-    )
+      )
   }
 
   const deleteBlog = (id) => {
@@ -94,7 +94,7 @@ const App = () => {
       .then(() => {
         setBlogs(blogs.filter(p => p.id !== id))
         notify('Blog successfully removed', 'info')
-      }).catch(() => notify(`Error`, 'alert')
+      }).catch(() => notify('Error', 'alert')
       )
   }
 
@@ -102,7 +102,7 @@ const App = () => {
     return (
       <div>
         <h1>Log in to application</h1>
-        <Notification message={notification} />
+        <Notification message={notification}/>
         <LoginForm
           password={password}
           user={user}
@@ -117,13 +117,15 @@ const App = () => {
   return (
     <div>
       <h1>Blog App</h1>
-      <Notification message={notification} />
-      <p>logged in as {user.name} <button onClick={logout}>logout</button></p>
+      <Notification message={notification}/>
+      <p>logged in as {user.name}
+        <button onClick={logout}>logout</button>
+      </p>
       <Togglable showLabel='new blog' hideLabel='cancel' ref={blogFormRef}>
         <CreateNewForm addBlog={addBlog}/>
       </Togglable>
       <h2>Saved blogs</h2>
-      {blogs.sort((a, b) => b.likes - a.likes ).map(blog =>
+      {blogs.sort((a, b) => b.likes - a.likes).map(blog =>
         <Blog
           key={blog.id}
           blog={blog}

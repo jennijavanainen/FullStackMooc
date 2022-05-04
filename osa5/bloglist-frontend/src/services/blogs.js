@@ -33,6 +33,6 @@ const remove = (id) => {
   }
   return axios.delete(`${baseUrl}/${id}`, config)
 }
+const exportedObjects = { getAll, create, update, setToken, remove }
 
-/* eslint import/no-anonymous-default-export: [2, {"allowObject": true}] */
-export default { getAll, create, update, setToken, remove }
+export default exportedObjects

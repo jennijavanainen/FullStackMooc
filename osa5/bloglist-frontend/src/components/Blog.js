@@ -1,5 +1,5 @@
 import React from 'react'
-import {useState} from 'react'
+import { useState } from 'react'
 
 const Blog = ({ blog, updateBlog, user, deleteBlog }) => {
   const [showInfo, setShowInfo] = useState(false)

@@ -6,5 +6,7 @@ const login = async credentials => {
   return response.data
 }
 
-/* eslint import/no-anonymous-default-export: [2, {"allowObject": true}] */
-export default { login }
+const exportedObjects = {
+  login
+}
+export default exportedObjects
