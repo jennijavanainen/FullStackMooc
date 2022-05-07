@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-const createNewForm = ({ addBlog }) => {
+const CreateNewForm = ({ addBlog }) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
@@ -24,33 +24,36 @@ const createNewForm = ({ addBlog }) => {
       <div>
         title:
         <input
-          type="text"
+          type='text'
           value={ title }
-          name="Title"
+          name='Title'
           onChange={({ target }) => setTitle(target.value)}
+          id={'title-input'}
         />
       </div>
       <div>
         author:
         <input
-          type="text"
-          value={author}
-          name="Author"
+          type='text'
+          value={ author }
+          name='Author'
           onChange={({ target }) => setAuthor(target.value)}
+          id={'author-input'}
         />
       </div>
       <div>
         url:
         <input
-          type="text"
+          type='text'
           value={url}
-          name="Url"
+          name='Url'
           onChange={({ target }) => setUrl(target.value)}
+          id={'url-input'}
         />
       </div>
-      <button type="submit">create</button>
+      <button type='submit'>create</button>
     </form>
 
   )
 }
-export default createNewForm
+export default CreateNewForm
