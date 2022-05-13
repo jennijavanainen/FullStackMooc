@@ -1,6 +1,6 @@
 import { useDispatch } from 'react-redux'
 import { createAnecdote } from '../reducers/anecdoteReducer';
-import { setMessage, removeMessage } from '../reducers/notificationReducer';
+import { setNotification } from '../reducers/notificationReducer';
 
 const AnecdoteForm = () => {
   const dispatch = useDispatch()
@@ -12,15 +12,9 @@ const AnecdoteForm = () => {
     if (content) {
       event.target.anecdote.value = ''
       dispatch(createAnecdote(content))
-      dispatch(setMessage(`Added new anecdote ${content}`))
-      setTimeout(() => {
-        dispatch(removeMessage())
-      }, 5000)
+      dispatch(setNotification(`you added new anecdote '${content}'`, 5))
     } else {
-      dispatch(setMessage('Anecdote missing'))
-      setTimeout(() => {
-        dispatch(removeMessage())
-      }, 5000)
+      dispatch(setNotification('Input field is empty', 3))
     }
 
   }
