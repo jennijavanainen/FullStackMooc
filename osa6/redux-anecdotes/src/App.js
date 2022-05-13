@@ -7,8 +7,8 @@ const App = () => {
 
   return (
     <div>
-      <Notification />
       <h1>Anecdotes</h1>
+      <Notification />
       <Filter />
       <AnecdoteList />
       <AnecdoteForm />
