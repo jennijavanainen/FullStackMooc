@@ -1,9 +1,11 @@
 import { useDispatch } from 'react-redux'
 import { createAnecdote } from '../reducers/anecdoteReducer';
 import { setNotification } from '../reducers/notificationReducer';
+import { connect } from 'react-redux'
+import {setFilter} from "../reducers/filterReducer";
 
-const AnecdoteForm = () => {
-  const dispatch = useDispatch()
+const AnecdoteForm = (props) => {
+  //const dispatch = useDispatch()
 
   const addNew = async (event) => {
     event.preventDefault()
@@ -11,10 +13,13 @@ const AnecdoteForm = () => {
 
     if (content) {
       event.target.anecdote.value = ''
-      dispatch(createAnecdote(content))
-      dispatch(setNotification(`you added new anecdote '${content}'`, 5))
+      //dispatch(createAnecdote(content))
+      props.createAnecdote(content)
+      //dispatch(setNotification(`you added new anecdote '${content}'`, 5))
+      props.setNotification(`you added new anecdote '${content}'`, 5)
     } else {
-      dispatch(setNotification('Input field is empty', 3))
+      //dispatch(setNotification('Input field is empty', 3))
+      props.setNotification('Input field is empty', 3)
     }
 
   }
@@ -28,8 +33,9 @@ const AnecdoteForm = () => {
       </form>
     </div>
   )
-
-
 }
 
-export default AnecdoteForm
+export default connect(
+  null,
+  { createAnecdote, setNotification }
+)(AnecdoteForm)
