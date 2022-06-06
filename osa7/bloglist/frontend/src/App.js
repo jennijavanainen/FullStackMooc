@@ -43,7 +43,7 @@ const App = () => {
 
   const dispatch = useDispatch()
 
-  const login = async (username, password) => {
+  const login = (username, password) => {
     loginService.login({
       username, password,
     }).then(user => {
@@ -63,7 +63,7 @@ const App = () => {
 
   const blogFormRef = useRef()
 
-  const createBlog = async (blog) => {
+  const createBlog = (blog) => {
     blogService.create(blog).then(createdBlog => {
       notify(`a new blog '${createdBlog.title}' by ${createdBlog.author} added`, 'info')
       setBlogs(blogs.concat(createdBlog))
@@ -90,7 +90,7 @@ const App = () => {
     })
   }
 
-  const likeBlog = async (id) => {
+  const likeBlog = (id) => {
     const toLike = blogs.find(b => b.id === id)
     const liked = {
       ...toLike,
@@ -122,10 +122,10 @@ const App = () => {
     : null
 
   if (user === null) {
-    return <>
+    return <div className='container'>
       <Notification/>
       <LoginForm onLogin={login} />
-    </>
+    </div>
   }
 
   return (
