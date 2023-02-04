@@ -28,7 +28,7 @@ const App = () => {
   const authors = useQuery(ALL_AUTHORS)
   const books = useQuery(ALL_BOOKS)
 
-  if (authors.loading && books.loading)  {
+  if (authors.loading || books.loading)  {
     return <div>loading...</div>
   }
 
