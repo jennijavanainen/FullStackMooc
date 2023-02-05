@@ -81,7 +81,7 @@ const App = () => {
 
       <Authors show={page === 'authors'} authors={authors.data.allAuthors} authorGQL={ALL_AUTHORS} token={token} />
 
-      <Books show={page === 'books'} books={books.data.allBooks} />
+      <Books show={page === 'books'} books={books.data.allBooks} bookGQL={ALL_BOOKS} />
 
       <NewBook show={page === 'add'} authorGQL={ALL_AUTHORS} bookGQL={ALL_BOOKS} />
     </div>

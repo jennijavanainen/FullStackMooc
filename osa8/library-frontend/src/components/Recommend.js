@@ -1,5 +1,3 @@
-import { useEffect, useState } from 'react'
-
 const Recommend = (props) => {
 
   if (!props.show) {
