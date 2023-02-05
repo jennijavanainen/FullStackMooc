@@ -3,6 +3,7 @@ import Authors from './components/Authors'
 import Books from './components/Books'
 import NewBook from './components/NewBook'
 import Login from './components/Login'
+import Recommend from './components/Recommend'
 import { gql, useApolloClient, useQuery } from '@apollo/client'
 
 const ALL_AUTHORS = gql`
@@ -63,26 +64,22 @@ const App = () => {
     }, 10000)
   }
 
-  if (!token) {
-    return (
-      <>
-        <Notify errorMessage={errorMessage} />
-        <Login setToken={setToken} setError={notify} />
-      </>
-    )
-  }
-
   return (
     <div>
       <div>
         <button onClick={() => setPage('authors')}>authors</button>
         <button onClick={() => setPage('books')}>books</button>
-        <button onClick={() => setPage('add')}>add book</button>
-        <button onClick={logout}>logout</button>
+        { token && <button onClick={() => setPage('add')}>add book</button> }
+        { token && <button onClick={() => setPage('recommend')}>recommend</button> }
+        { token ? <button onClick={logout}>logout</button> : <button onClick={() => setPage('login')}>login</button> }
       </div>
       <Notify errorMessage={errorMessage} />
 
-      <Authors show={page === 'authors'} authors={authors.data.allAuthors} authorGQL={ALL_AUTHORS} />
+      { page === 'login' && <Login show={page === 'login'} setError={notify} setToken={setToken} /> }
+
+      <Recommend show={page === 'recommend'} user={user} books={books.data.allBooks}/>
+
+      <Authors show={page === 'authors'} authors={authors.data.allAuthors} authorGQL={ALL_AUTHORS} token={token} />
 
       <Books show={page === 'books'} books={books.data.allBooks} />
 
